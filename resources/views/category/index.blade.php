@@ -1,6 +1,7 @@
 @extends('layouts.layout')
   @section('content')
-    <h1>categorias</h1>
+  <div class="row">
+    <h1>Categorias</h1>
     <table class="table table-hover">
       <thead class="thead-dark">
         <tr>
@@ -30,4 +31,5 @@
 
       </tbody>
     </table>
+</div>
   @endsection

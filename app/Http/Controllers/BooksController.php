@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use App\Books;
+use App\Category;
+use App\Userbook;
+use DB;
 
 class BooksController extends Controller
 {
@@ -14,8 +17,17 @@ class BooksController extends Controller
      */
     public function index()
     {
-        $book = Books::all();
-        return view('books.index')->with(compact('book'));
+
+        $book=DB::table('book')
+             ->join('category', 'book.category', '=', 'category.id_cat')
+             ->join('userbook', 'book.id_user', '=', 'userbook.id_user')
+             ->select('book.id_book','book.author','book.id_book','book.published_date',
+                      'book.name AS libro','category.name AS category','userbook.name AS user',
+                      'book.status_book')
+               ->orderBy('libro', 'DESC')
+               ->paginate(5);;
+            return view('books.index')->with(compact('book'));
+
     }
 
     /**
@@ -25,7 +37,9 @@ class BooksController extends Controller
      */
     public function create()
     {
-        //
+        $cat = Category::all();
+        $user = Userbook::all();
+        return view('books.create',['cat'=>$cat,'user'=>$user]);
     }
 
     /**
@@ -36,7 +50,15 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $book=new Books;
+      $book->name=$request->input('name');
+      $book->author=$request->input('author');
+      $book->category=$request->input('category');
+      $book->published_date=$request->get('published_date');
+      $book->id_user=$request->input('id_user');
+      $book->status_book= 1;
+      $book->save();
+      return Redirect::to('books');
     }
 
     /**
@@ -58,7 +80,7 @@ class BooksController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('books.edit');
     }
 
     /**
